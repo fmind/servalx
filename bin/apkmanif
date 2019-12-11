@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+""""Extract and print the manifest of an APK file."""
+
+import argparse
+import sys
+
+from servalx import apk as Apk
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('apkfile', type=argparse.FileType('r'))
+
+
+def apkmanif(apkfile):
+    apk = Apk.APK(apkfile.read())
+
+    return apk.find_manifest()
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    buffer, infos = apkmanif(args.apkfile)
+
+    sys.stdout.write(buffer.read())

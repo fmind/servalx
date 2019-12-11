@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Get multiple json documents from the database one by one.
+
+If the collection of one document fails, the process will continue."""
+
+from __future__ import print_function
+
+import argparse
+import logging
+from functools import partial
+from multiprocessing import cpu_count
+from multiprocessing.dummy import Pool
+
+from servalx import couch, environ
+
+JOBS = cpu_count()
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('keyfile', type=argparse.FileType('r'))
+PARSER.add_argument('--db', '-d', required=True, help="the database name.")
+PARSER.add_argument('--job', '-j', type=int, default=JOBS, help="number of threads.")
+PARSER.add_argument('--url', '-u', help="Endpoint URL or use env[%s]" % environ.ENV_COUCH_ENDPOINT)
+
+
+def dbone(conn, db, key):
+    try:
+        return couch.raw(conn, db, key)
+    except couch.CouchError as e:
+        logging.error(e)
+        return None
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+    url = args.url or environ.COUCH_ENDPOINT
+    logging.basicConfig()
+
+    pool = Pool(args.job)
+    conn = couch.Connection(url)
+    dbone_ = partial(dbone, conn, args.db)
+
+    for doc in pool.imap_unordered(dbone_, args.keyfile, chunksize=cpu_count()):
+        if doc is None:
+            continue
+
+        print(doc)

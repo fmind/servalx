@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Get a single json document from the backend."""
+
+import argparse
+import sys
+
+from servalx import couch, environ
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('key', help="Key of the document or use stdin.")
+PARSER.add_argument('--db', '-d', required=True, help="database name")
+PARSER.add_argument('--url', '-u', help="Endpoint URL or use env[%s]" % environ.ENV_COUCH_ENDPOINT)
+
+
+def dbone(conn, db, key):
+    return couch.raw(conn, db, key)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+    url = args.url or environ.COUCH_ENDPOINT
+
+    conn = couch.Connection(url)
+
+    id_ = args.id or sys.stdin.read().strip()
+    doc = dbone(conn, args.db, id_)
+
+    sys.stdout.write(doc)

@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Stream the content of an APK from Androzoo.
+Use ANDROZOO_APIKEY to retrieve the API Key from the OS Environment.
+Use ANDROZOO_APIURL to retrieve the API URL from the OS Environment.
+"""
+
+import argparse
+import os
+import sys
+
+from servalx import androzoo, environ
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('sha256', help="signature of the APK or use stdin.")
+PARSER.add_argument('--key', '-k', help="API Key or use env[%s]." % environ.ENV_ANDROZOO_APIKEY)
+PARSER.add_argument('--url', '-u', help="API URL or use env[%s]." % environ.ENV_ANDROZOO_APIURL)
+
+
+def apkstream(apiurl, apikey, sha256):
+    api = androzoo.AndrozooAPI(apikey, apiurl)
+
+    return androzoo.download(api, sha256)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    apiurl = args.url or environ.ANDROZOO_APIURL or androzoo.API_URL
+    apikey = args.key or environ.ANDROZOO_APIKEY
+    sha256 = args.sha256 or sys.stdin.read().strip()
+    apkfile = apkstream(apiurl, apikey, sha256)
+
+    sys.stdout.write(apkfile.read())

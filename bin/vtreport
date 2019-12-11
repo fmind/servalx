@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Retrive a scan report from VirusTotal API."""
+
+import argparse
+import os
+import sys
+
+import simplejson as json
+
+from servalx import environ, virustotal
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('signature', help="identifier of a scan or use stdin.")
+PARSER.add_argument('--key', '-k', help="API key or use env[%s]." % environ.ENV_VIRUSTOTAL_APIKEY)
+
+
+def vtreport(apikey, signature):
+    api = virustotal.VirusTotalAPI(apikey)
+
+    return virustotal.file_report(api, signature)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    signature = args.signature or sys.stdin.read().strip()
+    apikey = args.key or environ.VIRUSTOTAL_APIKEY
+    report = vtreport(apikey, signature)
+
+    json.dump(report, sys.stdout)

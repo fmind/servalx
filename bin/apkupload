@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Upload the content of an APK to Androzoo."""
+
+import argparse
+import os
+import sys
+
+from servalx import androzoo, environ
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('apkfile', type=argparse.FileType('r'), default=sys.stdin)
+PARSER.add_argument('--key', '-k', help="API Key or use env[%s]." % environ.ENV_ANDROZOO_APIKEY)
+PARSER.add_argument('--url', '-u', help="API URL or use env[%s]." % environ.ENV_ANDROZOO_APIURL)
+
+
+def apkstream(apiurl, apikey, apkfile, market):
+    api = androzoo.AndrozooAPI(apikey, apiurl)
+
+    return androzoo.upload(api, apkfile, market)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    apiurl = args.url or environ.ANDROZOO_APIURL or androzoo.API_URL
+    apikey = args.key or environ.ANDROZOO_APIKEY
+
+    apisig = apkstream(apiurl, apikey, args.apkfile, args.market)
+
+    print(apisig)

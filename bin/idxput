@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Send a list of [id, body] documents to the index."""
+
+import argparse
+import logging
+from functools import partial
+from multiprocessing import cpu_count
+from multiprocessing.dummy import Pool
+
+import simplejson as json
+
+from servalx import elastic, environ
+
+JOBS = cpu_count()
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('documents', type=argparse.FileType('r'))
+PARSER.add_argument('--idx', '-d', required=True, help="the index name.")
+PARSER.add_argument('--job', '-j', type=int, default=JOBS, help="number of threads.")
+PARSER.add_argument('--urls', '-u', help="CLUSTER URLS or use env[%s]" % environ.ENV_ELASTIC_URLS)
+
+
+def idxput(conn, idx, jsdoc):
+    key, doc = json.loads(jsdoc)
+
+    try:
+        return elastic.index(conn, idx, key, doc)
+    except Exception as e:
+        logging.error(e)
+        return None
+
+
+if __name__ == '__main__':
+    logging.basicConfig()
+    args = PARSER.parse_args()
+    urls = args.urls or environ.ELASTIC_URLS
+
+    pool = Pool(args.job)
+    conn = elastic.Connection(urls)
+    idxput_ = partial(idxput, conn, args.idx)
+
+    for res in pool.imap_unordered(idxput_, args.documents, chunksize=args.job):
+        if res is not None:
+            print(res)

@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Send a list of [id, body] documents to the database."""
+
+import argparse
+import logging
+from functools import partial
+from multiprocessing import cpu_count
+from multiprocessing.dummy import Pool
+
+import simplejson as json
+
+from servalx import couch, environ
+
+JOBS = cpu_count()
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('documents', type=argparse.FileType('r'))
+PARSER.add_argument('--db', '-d', required=True, help="the database name.")
+PARSER.add_argument('--job', '-j', type=int, default=JOBS, help="number of threads.")
+PARSER.add_argument('--url', '-u', help="Endpoint URL or use env[%s]" % environ.ENV_COUCH_ENDPOINT)
+
+
+def dbput(conn, db, jsdoc):
+    key, doc = json.loads(jsdoc)
+
+    try:
+        return couch.put(conn, db, key, doc)
+    except couch.CouchError as e:
+        logging.error(e)
+        return None
+
+
+if __name__ == '__main__':
+    logging.basicConfig()
+    args = PARSER.parse_args()
+    url = args.url or environ.COUCH_ENDPOINT
+
+    pool = Pool(args.job)
+    conn = couch.Connection(url)
+    dbput_ = partial(dbput, conn, args.db)
+
+    for res in pool.imap_unordered(dbput_, args.documents, chunksize=args.job):
+        if res is not None:
+            print(res)

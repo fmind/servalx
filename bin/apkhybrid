@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Extract statistics about the web components of an APK infos."""
+
+import argparse
+import simplejson as json
+import sys
+
+from servalx import hybrids
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('apkinfos', type=argparse.FileType('r'))
+
+
+def apkhybrids(apkinfos):
+    return hybrids.from_apkinfos(apkinfos)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    infos = json.load(args.apkinfos)
+    hybrid = apkhybrids(infos)
+
+    json.dump(hybrid, sys.stdout)

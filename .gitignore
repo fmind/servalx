@@ -1,0 +1,23 @@
+# python
+*.py[cod]
+*.egg
+*.eggs/
+*.egg-info/
+__pycache__/
+.mypy_cache/
+
+# virtualenv
+venv
+.tox
+.cache
+.coverage
+.pytest_cache
+
+# distribution
+# dist/
+build/
+
+# documentation
+docs/html
+docs/apidoc
+docs/doctrees

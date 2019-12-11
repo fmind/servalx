@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Compute and print the sha256 of an APK file."""
+
+import argparse
+import simplejson as json
+import sys
+
+from servalx import apk as Apk
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('apkfile', type=argparse.FileType('r'))
+
+
+def apksha256(apkfile):
+    apk = Apk.APK(apkfile.read())
+
+    return apk.compute_sha256()
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    sha256 = apksha256(args.apkfile)
+
+    json.dump(sha256, sys.stdout)

@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Extract an index document from an APK infos."""
+
+import argparse
+import simplejson as json
+import sys
+
+from servalx import indexes
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('apkinfos', type=argparse.FileType('r'))
+
+
+def apkindex(apkinfos):
+    return indexes.from_apkinfos(apkinfos)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    infos = json.load(args.apkinfos)
+    index = apkindex(infos)
+
+    json.dump(index, sys.stdout)

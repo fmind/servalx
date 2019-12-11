@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Get a single json document from the index."""
+
+import simplejson as json
+import argparse
+import sys
+
+from servalx import elastic, environ
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('key', help="key of the document or use stdin.")
+PARSER.add_argument('--idx', '-d', required=True, help="an index name.")
+PARSER.add_argument('--urls', '-u', help="CLUSTER URLS or use env[%s]" % environ.ENV_ELASTIC_URLS)
+
+
+def idxone(conn, db, key):
+    return elastic.get(conn, db, key)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+    urls = args.urls or environ.ELASTIC_URLS
+
+    conn = elastic.Connection(urls)
+    key = args.key or sys.stdin.read().strip()
+
+    doc = idxone(conn, args.idx, key)
+
+    sys.stdout.write(json.dumps(doc))

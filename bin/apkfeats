@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Extract machine learning features from an APK infos."""
+
+import argparse
+import simplejson as json
+import sys
+
+from servalx import features
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('apkinfos', type=argparse.FileType('r'))
+
+
+def apkfeats(apkinfos):
+    return features.from_apkinfos(apkinfos)
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+
+    infos = json.load(args.apkinfos)
+    feats = apkfeats(infos)
+
+    json.dump(feats, sys.stdout)

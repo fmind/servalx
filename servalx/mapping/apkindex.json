@@ -1,0 +1,254 @@
+{
+    "settings" : {
+        "index" : {
+            "refresh_interval" : -1,
+            "number_of_shards" : 10,
+            "number_of_replicas": 0,
+            "codec": "best_compression",
+            "mapping": {
+                "ignore_malformed": false
+            }
+        },
+        "analysis": {
+            "normalizer": {
+                "lowercaser": {
+                "type": "custom",
+                "char_filter": [],
+                "filter": ["lowercase"]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "doc": {
+            "dynamic": "strict",
+            "date_detection": false,
+            "properties": {
+                "meta.md5": {
+                    "index": false,
+                    "doc_values": false,
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "meta.sha1": {
+                    "index": false,
+                    "doc_values": false,
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "meta.sha256": {
+                    "index": false,
+                    "doc_values": false,
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "meta.vt.date": {
+                    "type": "date",
+                    "format": "yyyy-MM-dd HH:mm:ss"
+                },
+                "meta.vt.score": {
+                    "type": "short"
+                },
+                "meta.apk.size": {
+                    "type": "long"
+                },
+                "meta.dex.size": {
+                    "type": "long"
+                },
+                "meta.dex.date": {
+                    "type": "date",
+                    "format": "yyyy-MM-dd HH:mm:ss"
+                },
+                "meta.pkg.name": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "meta.pkg.code": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "meta.market": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "label.type": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "label.family": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.debug": {
+                    "type": "boolean"
+                },
+                "source.format": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.string": {
+                    "type": "keyword",
+                    "ignore_above": 32000,
+                    "normalizer": "lowercaser"
+                },
+                "source.invoke": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.field.path": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.field.name": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.class.path": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.class.name": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.class.inter": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.class.super": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.class.package": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.method.path": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.method.name": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "source.method.code": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.action": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.activity": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.service": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.provider": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.receiver": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.category": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.vername": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.vercode": {
+                    "type": "integer"
+                },
+                "manifest.metakey": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.metaval": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.instrumentation": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.minsdk": {
+                    "type": "short"
+                },
+                "manifest.maxsdk": {
+                    "type": "short"
+                },
+                "manifest.tarsdk": {
+                    "type": "short"
+                },
+                "manifest.library": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.feature": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.permission": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.permgroup": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "manifest.permtree": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "file.name": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "file.path": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "file.sha256": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "resource.entry": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "resource.string": {
+                    "type": "keyword",
+                    "ignore_above": 32000,
+                    "normalizer": "lowercaser"
+                },
+                "resource.package": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "resource.language": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "certificate.owner": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "certificate.issuer": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                },
+                "certificate.signature": {
+                    "type": "keyword",
+                    "normalizer": "lowercaser"
+                }
+            }
+        }
+    }
+}

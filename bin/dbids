@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Get the keys of a database from the backend."""
+
+import argparse
+
+from servalx import couch, environ
+
+DEFAULT_PER_HTTP = 1000
+
+PARSER = argparse.ArgumentParser(description=__doc__)
+PARSER.add_argument('--db', '-d', required=True, help='database id')
+PARSER.add_argument('--per-http', '-p', type=int, default=DEFAULT_PER_HTTP)
+PARSER.add_argument('--url', '-u', help="Endpoint URL or use env[%s]" % environ.ENV_COUCH_ENDPOINT)
+
+
+def dbids(conn, db, per_http=DEFAULT_PER_HTTP):
+    for k in couch.keys(conn, db, _per_http=per_http):
+        yield k
+
+
+if __name__ == '__main__':
+    args = PARSER.parse_args()
+    url = args.url or environ.COUCH_ENDPOINT
+
+    conn = couch.Connection(url)
+
+    ids = dbids(conn, args.db, per_http=args.per_http)
+
+    for id_ in ids:
+        print(id_)
